@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  telegram-bot-service:
+    build: .
+    ports:
+      - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
+      - ${DEBUG_PORT}:${DEBUG_PORT}
+    env_file: ../.env
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "telegrambot.botUsername":"${TELEGRAM_BOT_USERNAME}",
+        "telegrambot.botToken":"${TELEGRAM_BOT_TOKEN}"
+      }'
+
