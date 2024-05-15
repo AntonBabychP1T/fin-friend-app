@@ -27,13 +27,29 @@ services:
       - config-server
       - kafka
 
+  ocr-service:
+    build: ./ocr-service
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.application.name": "ocr-service",
+        "spring.kafka.bootstrap-servers": "kafka:9092",
+        "spring.kafka.consumer.group-id": "ocr-service-group",
+        "spring.kafka.consumer.auto-offset-reset": "earliest",
+        "spring.kafka.consumer.key-deserializer": "org.apache.kafka.common.serialization.StringDeserializer",
+        "spring.kafka.consumer.value-deserializer": "org.apache.kafka.common.serialization.StringDeserializer"
+      }'
+    depends_on:
+      - kafka
+
   config-server:
     build: ./config-server
     ports:
       - "8888:8888"
     environment:
       SPRING_APPLICATION_JSON: '{
-        "server.port": "8888",
+        "server.port": 8888,
         "spring.cloud.config.server.git.uri": "https://github.com/your-config-repo",
         "spring.cloud.config.server.git.clone-on-start": true,
         "eureka.client.serviceUrl.defaultZone": "http://eureka-server:8761/eureka/"
@@ -51,6 +67,7 @@ services:
         "eureka.server.enable-self-preservation": false
       }'
 
+
   kafka:
     image: confluentinc/cp-kafka:latest
     ports:
@@ -59,6 +76,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
 
