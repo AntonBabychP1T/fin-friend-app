@@ -11,6 +11,11 @@ import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @RequiredArgsConstructor
 @Component
 public class FinTrackerBot extends TelegramLongPollingBot {
@@ -30,8 +35,18 @@ public class FinTrackerBot extends TelegramLongPollingBot {
                 File file = execute(new GetFile(fileId));
                 String filePath = file.getFilePath();
                 java.io.File downloadedFile = downloadFile(filePath);
-                kafkaTemplate.send("telegram-bot-topic", downloadedFile.getAbsolutePath());
-            } catch (TelegramApiException e) {
+
+                // Збереження файлу у спільній директорії
+                Path sharedDir = Paths.get("/shared");
+                if (!Files.exists(sharedDir)) {
+                    Files.createDirectories(sharedDir);
+                }
+                Path targetPath = sharedDir.resolve(downloadedFile.getName());
+                Files.copy(downloadedFile.toPath(), targetPath);
+
+                // Відправка шляху до файлу в Kafka
+                kafkaTemplate.send("telegram-bot-topic", targetPath.toString());
+            } catch (TelegramApiException | IOException e) {
                 e.printStackTrace();
             }
         } else if (update.hasMessage() && update.getMessage().hasText()) {

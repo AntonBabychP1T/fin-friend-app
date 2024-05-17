@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/fin-friend-app.iml" filepath="$PROJECT_DIR$/.idea/fin-friend-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ocr-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ocr-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/telegram-bot-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/telegram-bot-service.main.iml" />
     </modules>
   </component>

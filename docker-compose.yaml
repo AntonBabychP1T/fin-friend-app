@@ -11,6 +11,8 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       TELEGRAM_BOT_USERNAME: fin_friend_bot
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+    volumes:
+      - shared-volume:/shared
     networks:
       - app-network
 
@@ -21,6 +23,9 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      GOOGLE_APPLICATION_CREDENTIALS: "/app/service-account-file.json"
+    volumes:
+      - shared-volume:/shared
     networks:
       - app-network
 
@@ -51,3 +56,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  shared-volume:
